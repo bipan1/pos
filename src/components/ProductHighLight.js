@@ -14,4 +14,4 @@ const ProductHighLight = ({ image, price, url }) => {
   )
 }
 
-export default ProductHighLight
+export default ProductHighLight;

@@ -21,7 +21,8 @@ class Home extends React.Component{
       fullDescription: null,
       primaryList : [],
       secondaryList : [],
-      flag : false    //flag to render slider child
+      flag : false,    //flag to render slider child
+      toCategory : false
        
     }
   }
@@ -68,6 +69,7 @@ class Home extends React.Component{
         list.push(this.webcam.getScreenshot())
     }
 
+    console.log(list)
     //base64 to image file conversion.
     const base64ToBlob = (image, fileName) => {
         const byteString = atob(image);
@@ -81,6 +83,7 @@ class Home extends React.Component{
         return img;
     }
     const file = list.map((image) => base64ToBlob(image.split(',')[1], 'file.png'))
+    console.log(file[0])
 
     // from data 
     let formdata = new FormData();
@@ -88,14 +91,17 @@ class Home extends React.Component{
     formdata.append('file', file[0])
     formdata.append('file', file[1])
     formdata.append('file', file[2])
+    console.log(formdata)
     //AI api call
     axios.post("http://192.168.80.20:8001/gender",formdata)
     .then(response => {
-        this.setState({
-            primaryList : response.data[0],
-            secondaryList : response.data[1],
-            flag : true
-        });
+      console.log(response.data)
+      this.setState({
+        primaryList : response.data[0],
+        secondaryList : response.data[1],
+        toCategory : true
+      });
+      console.log(this.state.primaryList)
     })
     .catch(error => {
       this.initFaceDetection()
@@ -115,7 +121,7 @@ class Home extends React.Component{
       return <Redirect to={{
         pathname : '/category',
         state : {
-          state : this.props.primaryList
+          primaryList : this.state.primaryList
         }
       }}/>
     }
@@ -150,7 +156,6 @@ class Home extends React.Component{
                 arrows={false}
                 centerMode={false}
                 className="slick-thumb slick-thumb_home"
-  
               >
                 <div className="item">
                   <ProductNavigation image={Product1} />
@@ -171,9 +176,9 @@ class Home extends React.Component{
               </Slider>
   
             </div>
-            <div className="col-2">
+            {this.state.toCategory && <div className="col-2">
               <button onClick={this.handleClick} className="btn btn-warning text-white ">View more</button>
-            </div>
+            </div>}
           </div>
         </div>
       </main>

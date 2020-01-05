@@ -1,10 +1,9 @@
 import React from 'react'
 import Avatar from '../image/avatar.png'
-import Product1 from '../image/product1.png';
 
 
 
-const ProductSelection = () => {
+const ProductSelection = (props) => {
   return (
     <div className="product-selection">
 
@@ -24,12 +23,12 @@ const ProductSelection = () => {
       <div className="product-description align-items-center">
         <span className="heading">Quantity</span>
         <div className="description">
-          <button className="btn-quantity mr-3"><i className="ic-minus"></i></button>
+          <button className="btn-quantity mr-3" onClick={props.decreaseQuantity}><i className="ic-minus"></i></button>
           <div className="input-product">
-            <label htmlFor="" className="mb-0">2</label>
+            <label htmlFor="" className="mb-0">{props.quantity}</label>
             <input type="hidden" value="2" />
           </div>
-          <button className="btn-quantity ml-3" >
+          <button className="btn-quantity ml-3" onClick={props.increaseQuantity}>
             <i className="ic-add"></i>
           </button>
         </div>
@@ -40,32 +39,20 @@ const ProductSelection = () => {
       <ul className="nav nav-pills tab-product mb-3" id="pills-tab" role="tablist">
         <li className="nav-item">
           <a className="nav-link active" id="pills-product1-tab" data-toggle="pill" href="#pills-product1" role="tab" aria-controls="pills-product1" aria-selected="true">
-
-
             <div className="imgbox">
-              <img src={Product1} alt="" />
+              <img src={props.index} alt="" />
             </div>
-
-
-
           </a>
         </li>
         <li className="nav-item">
           <a className="nav-link" id="pills-product2-tab" data-toggle="pill" href="#pills-product2" role="tab" aria-controls="pills-product2" aria-selected="false">
             <div className="imgbox">
-              <img src={Product1} alt="" />
+              <img src={props.index} alt="" />
             </div>
-
           </a>
         </li>
-
-      
-      
-
-      
-      
-
       </ul>
+
       <div className="tab-content" id="pills-tabContent">
         <div className="tab-pane fade show active" id="pills-product1" role="tabpanel" aria-labelledby="pills-product1-tab">
           
@@ -171,7 +158,7 @@ const ProductSelection = () => {
 
 
 
-
+      <button className="btn btn-primary" onClick={props.changeFlag}>Done</button> 
     </div>
   )
 }
