@@ -17,11 +17,15 @@ export default class ProductDescription extends Component {
       nav1: null,
       nav2: null,
       quantity:1,
+      selctedAttributes : [{
+        size:"",
+        color:""
+      }],
       openProductSelection:false,
       productList : [Product1, Product2, Product3, Product4, Product5],
       idNo : 0,
-      selectedsize : [],
-      selectedColor : []
+      bag : [],
+      index : 0
     };
 
     changeFlag = () => {  //function to be passed as prob to toggle producctSelection page
@@ -30,28 +34,43 @@ export default class ProductDescription extends Component {
       })
     }
 
-  componentDidMount() {
-    this.setState({
-      nav1: this.slider1,
-      nav2: this.slider2
-    });
-  }
+    handleClick =(i) => {        //set the index of product in index state
+      this.setState({
+        index : i
+      })
+    }
 
-  increaseQuantity= ()=>{
+    componentDidMount() {
+      this.setState({
+        nav1: this.slider1,
+        nav2: this.slider2
+      });
+    }
+
+  increaseQuantity= ()=>{             //increase the quantity of selected product
+    let arr = this.state.selctedAttributes
+    arr.push({
+        size:"",
+        color:""
+      })
     this.setState((prevState)=>{
         return{
           quantity:prevState.quantity + 1,
-          openProductSelection:true,         //when quantity is greather than one then navigate to anoter page flag.
+          openProductSelection:true, 
+          selctedAttributes : arr        //when quantity is greather than one then navigate to anoter page flag.
         }
       
     })
   }
   
-  decreaseQuantity= ()=>{
+  decreaseQuantity= ()=>{              //decrease the quantity of selected product
     this.setState((prevState)=>{
       if(prevState.quantity !== 1){
+        let arr = this.state.selctedAttributes
+        arr.pop()
         return{
-          quantity:prevState.quantity - 1
+          quantity:prevState.quantity - 1,
+          selctedAttributes : arr
         }
       }
     })
@@ -63,32 +82,58 @@ export default class ProductDescription extends Component {
     })
   }
 
-  handleSizeChange = (event) => {  //function to hadle change in size radio buttons.
+  handleSizeChange = (event, index=0) => {     //function to hadle change in size radio buttons.
+    let arr = [...this.state.selctedAttributes]
+    arr[index].size = event.target.value
     this.setState({
-      selectedsize : event.target.value
+      selctedAttributes : arr
     })
   }
 
-  handleColorChange = (event) => {
+  handleColorChange = (event, index=0) => {     //handle the change in color of selcted product
+    let arr = [...this.state.selctedAttributes]
+    arr[index].color = event.target.value
     this.setState({
-      selectedColor : event.target.value
+      selctedAttributes : arr
     })
+  }
+
+  addToBag = (price, id) => {     // Add the contents to bag. (click handler)
+    let array = [];
+    this.state.selctedAttributes.map(item => {
+      let image  = this.state.productList[this.state.idNo]
+      let obj = {
+        "image" : image,
+        "price" : price,
+        "id" : id,
+        "size" : item.size,
+        "color" : item.color
+      }
+      array.push(obj);
+    })
+    this.setState({
+      bag : [...this.state.bag, ...array]
+    })
+
   }
 
   render() {
-  
     return (
       <>
-
       <Header/>
       <div className="mt-3 position-relative">
         <img src={Bubble} alt="Layout Design" className="img-bubble"/>
        
       {this.state.openProductSelection ?<ProductSelection changeFlag={this.changeFlag} 
         quantity={this.state.quantity} 
-        index={this.state.productList[this.state.idNo]}
+        image={this.state.productList[this.state.idNo]}
         increaseQuantity={this.increaseQuantity}
         decreaseQuantity={this.decreaseQuantity}
+        handleSizeChange={this.handleSizeChange}
+        handleColorChange={this.handleColorChange}
+        selctedAttributes={this.state.selctedAttributes}
+        handleClick={this.handleClick}
+        index={this.state.index}
         />
       :null}
 
@@ -102,7 +147,7 @@ export default class ProductDescription extends Component {
             this.state.productList.map(product => {
               return (
                 <div className="item">
-                <ProductHighLight image={product} price ="$200" url="/home" />
+                <ProductHighLight image={product} addToBag={this.addToBag} price = {200} url="/home" />
               </div>
               )
             })
@@ -128,7 +173,7 @@ export default class ProductDescription extends Component {
                 <input type="radio" 
                   id="small" 
                   value="small"
-                  checked={this.state.selectedsize === "small"}
+                  checked={this.state.selctedAttributes[0].size === "small"}
                   onChange={this.handleSizeChange}
                   name="sizeRadio"/>
                 <label htmlFor="small">S</label>
@@ -137,7 +182,7 @@ export default class ProductDescription extends Component {
                 <input type="radio" 
                   id="medium" 
                   value="medium"
-                  checked={this.state.selectedsize === "medium"}
+                  checked={this.state.selctedAttributes[0].size === "medium"}
                   onChange={this.handleSizeChange}
                   name="sizeRadio"/>
                 <label htmlFor="medium">M</label>
@@ -146,7 +191,7 @@ export default class ProductDescription extends Component {
                 <input type="radio" 
                   id="large" 
                   value="large"
-                  checked={this.state.selectedsize === "large"}
+                  checked={this.state.selctedAttributes[0].size === "large"}
                   onChange={this.handleSizeChange} 
                   name="sizeRadio"/>
                 <label htmlFor="large">L</label>
@@ -155,7 +200,7 @@ export default class ProductDescription extends Component {
                 <input type="radio" 
                   id="extralarge" 
                   value="extralarge"
-                  checked={this.state.selectedsize === "extralarge"}
+                  checked={this.state.selctedAttributes[0].size === "extralarge"}
                   onChange={this.handleSizeChange} 
                   name="sizeRadio"/>
                 <label htmlFor="extralarge">XL</label>
@@ -172,7 +217,7 @@ export default class ProductDescription extends Component {
                 <input type="radio" 
                   id="black"
                   value="black"
-                  checked={this.state.selectedColor === "black"}
+                  checked={this.state.selctedAttributes[0].color === "black"}
                   onChange={this.handleColorChange}
                   name="colorRadio"/>
                 <label htmlFor="black" style={{backgroundColor:'#000'}}></label>
@@ -181,7 +226,7 @@ export default class ProductDescription extends Component {
                 <input type="radio" 
                   id="white"
                   value="white"
-                  checked={this.state.selectedColor === "white"}
+                  checked={this.state.selctedAttributes[0].color === "white"}
                   onChange={this.handleColorChange}
                   name="colorRadio"/>
                 <label htmlFor="white" style={{backgroundColor:'#fff'}} ></label>
@@ -190,7 +235,7 @@ export default class ProductDescription extends Component {
                 <input type="radio"  
                   id="orange"
                   value="orange"
-                  checked={this.state.selectedColor === "ornage"}
+                  checked={this.state.selctedAttributes[0].color === "orange"}
                   onChange={this.handleColorChange} 
                   name="colorRadio" />
                 <label htmlFor="orange" style={{backgroundColor:'red'}} ></label>
@@ -239,7 +284,7 @@ export default class ProductDescription extends Component {
           }
         </Slider>
 
-        <Footer/>
+        <Footer bag = {this.state.bag}/>
       
       </div>
     

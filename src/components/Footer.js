@@ -9,7 +9,7 @@ class Footer extends React.Component{
     super(props)
   
     this.state = {
-       toBag : false
+      toBag : false
     }
   }
   
@@ -22,11 +22,26 @@ class Footer extends React.Component{
 
   render () {
 
+    
+    let totalcost = 0
+    this.props.bag.map(item => {
+      totalcost = totalcost + item.price
+      return {}
+    })
+
     if(this.state.toBag === true){
       return (
-        <Redirect to = '/bag' />
+        <Redirect to = {{
+          pathname : '/bag',
+          state : {
+            bagList : this.props.bag,
+            totalcost : totalcost
+          }
+        }} />
       )
     }
+
+
     return (
       <footer className="footer">
         <div className="footer-home">
@@ -40,13 +55,13 @@ class Footer extends React.Component{
           </div>
           <div className="item">
             <h6>My Bag</h6>
-            <p>0 items</p>
+            <p>{this.props.bag.length} items</p>
           </div>
   
   
           <div className="item">
             <h6>Cost</h6>
-            <p>$ 0.00</p>
+            <p>$ {totalcost}</p>
           </div>
   
           <div className="ml-auto">
