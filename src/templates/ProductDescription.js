@@ -21,8 +21,8 @@ export default class ProductDescription extends Component {
         size:"",
         color:""
       }],
-      openProductSelection:false,
-      productList : [Product1, Product2, Product3, Product4, Product5],
+      openProductSelection : false,
+      productList : [Product2, Product3, Product4, Product5],
       idNo : 0,
       bag : [],
       index : 0
@@ -101,7 +101,7 @@ export default class ProductDescription extends Component {
   addToBag = (price, id) => {     // Add the contents to bag. (click handler)
     let array = [];
     this.state.selctedAttributes.map(item => {
-      let image  = this.state.productList[this.state.idNo]
+      let image  = this.state.productList[this.state.idNo - 1]
       let obj = {
         "image" : image,
         "price" : price,
@@ -110,11 +110,11 @@ export default class ProductDescription extends Component {
         "color" : item.color
       }
       array.push(obj);
+      return {}
     })
     this.setState({
       bag : [...this.state.bag, ...array]
     })
-
   }
 
   render() {
@@ -143,12 +143,16 @@ export default class ProductDescription extends Component {
           arrows={false}
           afterChange = {this.nextClick}
         >
+          <div className="item">
+            <ProductHighLight image={Product1} addToBag={this.addToBag} price = {200} url="/home" />
+          </div>
+          
           {
             this.state.productList.map(product => {
               return (
                 <div className="item">
-                <ProductHighLight image={product} addToBag={this.addToBag} price = {200} url="/home" />
-              </div>
+                  <ProductHighLight image={product} addToBag={this.addToBag} price = {200} url="/home" />
+                </div>
               )
             })
           }
@@ -273,6 +277,7 @@ export default class ProductDescription extends Component {
           centerMode={true}
           className="slick-thumb"
         >
+          <ProductNavigation image={Product1}/>
           {
             this.state.productList.map(product => {
               return (

@@ -11,13 +11,20 @@ class Bag extends React.Component{
   
     this.state = {
       flag : false,
-      toHome : false
+      toHome : false,
+      toCheckout : false
     }
   }
   
   homeClickHandler = () => {
     this.setState({
       toHome : true
+    })
+  }
+
+  checkoutClickHandler = () => {
+    this.setState({
+      toCheckout : true
     })
   }
 
@@ -28,10 +35,27 @@ class Bag extends React.Component{
     })
   }
 
+  componentDidMount = () => {
+    this.setState({
+      bag : this.props.location.state.bagList
+    })
+  }
+
   render () {
     if(this.state.toHome === true) {
       return (
         <Redirect to = '/home' />
+      )
+    }
+
+    if(this.state.toCheckout === true) {
+      return (
+        <Redirect to = {{
+          pathname : '/confirmation',
+          state : {
+            bag : this.state.bag
+          }
+        }} />
       )
     }
 
@@ -94,7 +118,7 @@ class Bag extends React.Component{
         <div className="shadow-bottom"></div>
         <footer className="footer-checkout">
           <button onClick={this.homeClickHandler} className="btn btn-warning rounded-pill">Back to Home</button>
-          <button className="btn btn-primary rounded-pill">Checkout</button>
+          <button onClick={this.checkoutClickHandler} className="btn btn-primary rounded-pill">Checkout</button>
         </footer>
   
       </div>

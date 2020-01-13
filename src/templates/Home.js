@@ -19,10 +19,10 @@ class Home extends React.Component{
   
     this.state = {
       fullDescription: null,
-      primaryList : [],
-      secondaryList : [],
       flag : false,    //flag to render slider child
-      toCategory : false
+      toCategory : false,
+      recommendList : [],
+      gender : ''  //contains 'male' for male and 'female' for female
        
     }
   }
@@ -97,11 +97,9 @@ class Home extends React.Component{
     .then(response => {
       console.log(response.data)
       this.setState({
-        primaryList : response.data[0],
-        secondaryList : response.data[1],
-        toCategory : true
+        toCategory : true,
+        gender : response.data.gender
       });
-      console.log(this.state.primaryList)
     })
     .catch(error => {
       this.initFaceDetection()
@@ -121,7 +119,7 @@ class Home extends React.Component{
       return <Redirect to={{
         pathname : '/category',
         state : {
-          primaryList : this.state.primaryList
+          gender : this.state.gender
         }
       }}/>
     }

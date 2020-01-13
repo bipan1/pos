@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
 import Home from './templates/Home'
 import Category from './templates/Category'
 import ProductDescription from './templates/ProductDescription'
+import Items from './templates/Items'
 
 
 import Confirmation from './templates/Confirmation'
@@ -30,6 +31,7 @@ function App() {
         <Route path="/product" component={ProductDescription}/>
         <Route path="/confirmation" component={Confirmation}/>
         <Route path="/bag" component={Bag}/>
+        <Route path="/items" component={Items}/>
       </Switch>
       
     </React.Fragment>
