@@ -1,12 +1,12 @@
 import React from 'react'
 
 
-const ProductNavigation = ({image})=>{
+const ProductNavigation = ({image, onClick})=>{
   return(
     <div className="product-navigation">
-          <img src={image} alt="Fur Coats Navigation"/>
+      <img onClick={onClick} src={image} alt="Fur Coats Navigation"/>
     </div>
   )
 }
 
-export default ProductNavigation
+export default ProductNavigation;

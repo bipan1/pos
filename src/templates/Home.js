@@ -21,10 +21,13 @@ class Home extends React.Component{
       fullDescription: null,
       flag : false,    //flag to render slider child
       toCategory : false,
-      recommendList : [],
-      gender : ''  //contains 'male' for male and 'female' for female
-       
+      recommendList : [Product1, Product2, Product3, Product4, Product5],
+      gender : '' 
     }
+  }
+
+  onRecommendClick = () => {
+
   }
 
   setRef = webcam => {
@@ -38,8 +41,9 @@ class Home extends React.Component{
   initFaceDetection = () => {
     this.interval = setInterval(() => {
       this.handleProcessing();
-    }, 2000);
+    }, 3000);
   }
+
   componentDidMount() {
     this.initFaceDetection()
   }
@@ -49,25 +53,26 @@ class Home extends React.Component{
         this.webcam.getScreenshot(),
         inputSize
     ).then(fullDesc => {
+        console.log(fullDesc)
         this.setState({
             fullDescription : fullDesc
         })
-        console.log(this.state.fullDescription)
         if(this.state.fullDescription.length === 0){
             console.log("Face not detected.")
         }
         else {
+          console.log("face detected")
           this.callAiApi(); //Ai api is called once the face is detected.
+          clearInterval(this.interval);
         }
     });
   }
 
   callAiApi = () => {     //Ai api called when face is detected.
     const list = [];
-    clearInterval(this.interval);
-    for (let i=0; i<3; i++){
-        list.push(this.webcam.getScreenshot())
-    }
+    list.push(this.webcam.getScreenshot())
+    list.push(this.webcam.getScreenshot())
+    list.push(this.webcam.getScreenshot())
 
     console.log(list)
     //base64 to image file conversion.
@@ -83,7 +88,6 @@ class Home extends React.Component{
         return img;
     }
     const file = list.map((image) => base64ToBlob(image.split(',')[1], 'file.png'))
-    console.log(file[0])
 
     // from data 
     let formdata = new FormData();
@@ -91,14 +95,15 @@ class Home extends React.Component{
     formdata.append('file', file[0])
     formdata.append('file', file[1])
     formdata.append('file', file[2])
-    console.log(formdata)
+
     //AI api call
     axios.post("http://192.168.80.20:8001/gender",formdata)
     .then(response => {
-      console.log(response.data)
+      console.log(response)
       this.setState({
-        toCategory : true,
-        gender : response.data.gender
+        flag : true,
+        gender : response.data.gender,
+        recommendList : response.data.recommended_items
       });
     })
     .catch(error => {
@@ -109,13 +114,14 @@ class Home extends React.Component{
   
   handleClick = () => {
     this.setState({
-      flag : true
+      toCategory : true
     })
   }
   
   render () {
 
-    if(this.state.flag === true) {
+    if(this.state.toCategory === true) {
+      console.log(this.state.gender)
       return <Redirect to={{
         pathname : '/category',
         state : {
@@ -123,6 +129,13 @@ class Home extends React.Component{
         }
       }}/>
     }
+
+    if(this.state.falg){
+      let imgbox = document.querySelector('.home .imgbox')
+      console.log(imgbox)
+      imgbox.style.height='32rem';
+    }
+
 
     const videoConstraints = {
       width: 720,
@@ -132,53 +145,44 @@ class Home extends React.Component{
   
     return (
       <main className="home">
-  
+
         <h6 className="message-home">
           Welcome
         </h6>
-  
+
         <div className="imgbox">
           <Webcam
             audio={false} videoConstraints={videoConstraints} ref={this.setRef} > 
           </Webcam>
         </div>
-  
-        <div className="container">
-  
-          <div className="row align-items-center">
-            <div className="col-10">
-              <Slider
-                slidesToShow={4}
-                swipeToSlide={true}
-                focusOnSelect={true}
-                arrows={false}
-                centerMode={false}
-                className="slick-thumb slick-thumb_home"
-              >
-                <div className="item">
-                  <ProductNavigation image={Product1} />
-                </div>
-                <div className="item">
-                  <ProductNavigation image={Product2} />
-                </div>
-                <div>
-                  <ProductNavigation image={Product3} />
-                </div>
-                <div>
-                  <ProductNavigation image={Product4} />
-                </div>
-                <div>
-                  <ProductNavigation image={Product5} />
-                </div>
-  
-              </Slider>
-  
+
+        {this.state.flag && 
+          <div className="container">
+            <div className="row align-items-center">
+              <div className="col-10">
+                <Slider
+                  slidesToShow={4}
+                  swipeToSlide={true}
+                  focusOnSelect={true}
+                  arrows={false}
+                  centerMode={false}
+                  className="slick-thumb slick-thumb_home"
+                >
+                  {this.state.recommendList.map(item => {
+                    return (
+                      <div className="item">
+                        <ProductNavigation onClick={this.onRecommendClick} image={item.image} />
+                      </div> 
+                    )
+                  })}
+                </Slider>   
+              </div>
+              <div className="col-2">
+                <button onClick={this.handleClick} className="btn btn-warning text-white ">View more</button>
+              </div>
             </div>
-            {this.state.toCategory && <div className="col-2">
-              <button onClick={this.handleClick} className="btn btn-warning text-white ">View more</button>
-            </div>}
           </div>
-        </div>
+        }
       </main>
     )
   }

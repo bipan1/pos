@@ -2,7 +2,6 @@ import React from 'react';
 import axios from 'axios';
 import CategoryCard from '../components/CategoryCard';
 import Header from '../components/Header';
-import { Redirect } from 'react-router-dom';
 
 class Items extends React.Component {
     constructor(props) {

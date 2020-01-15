@@ -1,8 +1,6 @@
 import React from 'react'
 import Avatar from '../image/avatar.png'
 
-
-
 class ProductSelection extends React.Component {
   render () {
     const myMap = Array.apply(null, Array(this.props.quantity)).map((item,i) => {

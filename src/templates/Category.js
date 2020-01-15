@@ -99,7 +99,7 @@ class Category extends React.Component{
   render() {
     const {color} = this.state;
     let primaryList = []
-    if(this.props.gender === "male")
+    if(this.props.location.state.gender === "Male")
     {
       primaryList = this.state.male
     }
@@ -110,10 +110,6 @@ class Category extends React.Component{
     let newList = []
     newList = [...primaryList]
     newList.shift();
-    // const {primaryList} = this.props.location.state;
-    // let newList = []
-    // newList = [...this.props.location.state.primaryList]
-    // newList.shift();
 
     if(this.state.toItems === true) {
       return <Redirect to = {{
@@ -138,9 +134,9 @@ class Category extends React.Component{
 
           <div className="row">
             {
-              newList.map(item =>{
+              newList.map((item,i) =>{
                 return(
-                  <div className="col-6">
+                  <div key={item.category} className="col-6">
                     <CategoryCard title={item.category} image={item.image} 
                       background={color[Math.floor(Math.random()*color.length)]}/>
                   </div>
