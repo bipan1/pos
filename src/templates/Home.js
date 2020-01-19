@@ -130,7 +130,7 @@ class Home extends React.Component{
       }}/>
     }
 
-    if(this.state.falg){
+    if(this.state.flag){
       let imgbox = document.querySelector('.home .imgbox')
       console.log(imgbox)
       imgbox.style.height='32rem';
@@ -171,7 +171,7 @@ class Home extends React.Component{
                   {this.state.recommendList.map(item => {
                     return (
                       <div className="item">
-                        <ProductNavigation onClick={this.onRecommendClick} image={item.image} />
+                        <ProductNavigation onClick={this.onRecommendClick} image={item} />
                       </div> 
                     )
                   })}

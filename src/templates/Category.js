@@ -24,6 +24,7 @@ class Category extends React.Component{
   constructor(props) {
     super(props)
     this.state = {
+      category : '',
       color : ["bg-brown", "bg-info", "bg-pitch", "bg-orange", "bg-pink", "bg-light"],
       male : [
         {
@@ -100,6 +101,7 @@ class Category extends React.Component{
     const {color} = this.state;
     let primaryList = []
     if(this.props.location.state.gender === "Male")
+    // if(this.state.gender === "Male")
     {
       primaryList = this.state.male
     }
@@ -122,12 +124,16 @@ class Category extends React.Component{
 
     return (
       <>
-        <Header/>
+        <Header heading="Categories"/>
           <div className="container mt-4">
           <div className="row">
             <div className="col">
-              <CategoryCard click={this.handleCardClick} title={primaryList[0].category} image={primaryList[0].image} 
-                background={color[Math.floor(Math.random()*color.length)]}/>
+              <CategoryCard 
+                click={this.handleCardClick} 
+                title={primaryList[0].category} 
+                image={primaryList[0].image} 
+                background={color[Math.floor(Math.random()*color.length)]}
+              />
             </div>
           </div>
 
@@ -137,8 +143,12 @@ class Category extends React.Component{
               newList.map((item,i) =>{
                 return(
                   <div key={item.category} className="col-6">
-                    <CategoryCard title={item.category} image={item.image} 
-                      background={color[Math.floor(Math.random()*color.length)]}/>
+                    <CategoryCard 
+                      title={item.category} 
+                      image={item.image}
+                      click={this.handleCardClick} 
+                      background={color[Math.floor(Math.random()*color.length)]}
+                    />
                   </div>
                 )
               })

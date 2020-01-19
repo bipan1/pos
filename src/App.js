@@ -2,15 +2,15 @@ import React from 'react';
 import 'jquery';
 import 'bootstrap/js/dist/tab';
 
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
-import Home from './templates/Home'
-import Category from './templates/Category'
-import ProductDescription from './templates/ProductDescription'
-import Items from './templates/Items'
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import Home from './templates/Home';
+import Category from './templates/Category';
+import ProductDescription from './templates/ProductDescription';
+import Items from './templates/Items';
+// import Detail from './templates/Detail';
 
-
-import Confirmation from './templates/Confirmation'
-import Bag from './templates/Bag'
+import Confirmation from './templates/Confirmation';
+import Bag from './templates/Bag';
 import './App.scss';
 
 
@@ -30,6 +30,7 @@ function App() {
         <Route path="/confirmation" component={Confirmation}/>
         <Route path="/bag" component={Bag}/>
         <Route path="/items" component={Items}/>
+        {/* <Route path="/detail" component={Detail} /> */}
       </Switch>
       
     </React.Fragment>

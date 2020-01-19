@@ -85,7 +85,7 @@ class Bag extends React.Component{
               {
                 this.props.location.state.bagList.map((item, i)=> {
                   return (
-                    <li className="card-cart mt-3">
+                    <li key={i} className="card-cart mt-3">
                 <div className="imgbox">
                   <img src={item.image} alt="" />
                 </div>
@@ -98,7 +98,7 @@ class Bag extends React.Component{
                     <h4>${item.price}</h4>
                     <h4>{item.size}</h4>
                     <div className="radio-color pl-3">
-                      <input type="radio" id="orange" name="colorRadio" checked="true" />
+                      <input type="radio" id="orange" name="colorRadio" checked={true} />
                       <label htmlFor="orange" style={{ backgroundColor: item.color }} ></label>
                     </div>
                   </div>

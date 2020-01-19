@@ -1,32 +1,34 @@
 import React, { Component } from "react";
-import Slider from "react-slick";
-import Product1 from '../image/product1.png'
-import Product2 from '../image/product2.png'
-import Product3 from '../image/product3.png'
-import Product4 from '../image/product4.png'
-import Product5 from '../image/product5.png'
-import Bubble from '../image/bubble.png'
 import ProductHighLight from '../components/ProductHighLight'
 import ProductNavigation from "../components/ProductNavigation";
 import ProductSelection from '../components/ProductSelection'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 
+import Bubble from '../image/bubble.png'
+
 export default class ProductDescription extends Component {
     state = {
-      nav1: null,
-      nav2: null,
       quantity:1,
       selctedAttributes : [{
         size:"",
         color:""
       }],
       openProductSelection : false,
-      productList : [Product2, Product3, Product4, Product5],
       idNo : 0,
       bag : [],
-      index : 0
+      index : 0,
+      descriptionList : []
     };
+
+    componentDidMount = () => {
+        axios.get(`api_root_address${this.props.location.state.product}`)
+        .then(response => {
+            this.setState({
+                descriptionList : response.data
+            })
+        })
+    }
 
     changeFlag = () => {  //function to be passed as prob to toggle producctSelection page
       this.setState({
@@ -40,12 +42,7 @@ export default class ProductDescription extends Component {
       })
     }
 
-    componentDidMount() {
-      this.setState({
-        nav1: this.slider1,
-        nav2: this.slider2
-      });
-    }
+    
 
   increaseQuantity= ()=>{             //increase the quantity of selected product
     let arr = this.state.selctedAttributes
@@ -120,7 +117,7 @@ export default class ProductDescription extends Component {
   render() {
     return (
       <>
-      <Header heading="Product Detail"/>
+      <Header heading={this.props.location.state.product}/>
       <div className="mt-3 position-relative">
         <img src={Bubble} alt="Layout Design" className="img-bubble"/>
        
@@ -137,32 +134,15 @@ export default class ProductDescription extends Component {
         />
       :null}
 
-        <Slider
-          asNavFor={this.state.nav2}
-          ref={slider => (this.slider1 = slider)}
-          arrows={false}
-          afterChange = {this.nextClick}
-        >
-          <div className="item">
-            <ProductHighLight image={Product1} addToBag={this.addToBag} price = {200} url="/home" />
-          </div>
-          
-          {
-            this.state.productList.map(product => {
-              return (
-                <div className="item" key={product}>
-                  <ProductHighLight image={product} addToBag={this.addToBag} price = {200} url="/home" />
-                </div>
-              )
-            })
-          }
-        </Slider>
-        
+
+        <div className="item">
+        <ProductHighLight image={Product1} addToBag={this.addToBag} price = {200} url="/home" />
+        </div>
         
       <div className="container">
         <div className="product">
           <h6 className="product-name">
-            Black Fur Top Jacket
+            {this.state.descriptionList.name}
           </h6>
 
           <div className="product-description">
@@ -266,29 +246,6 @@ export default class ProductDescription extends Component {
 
         </div>
       </div>
-
-        <Slider
-          asNavFor={this.state.nav1}
-          ref={slider => (this.slider2 = slider)}
-          slidesToShow={4}
-          swipeToSlide={true}
-          focusOnSelect={true}
-          arrows={false}
-          centerMode={true}
-          className="slick-thumb"
-        >
-          <ProductNavigation image={Product1}/>
-          {
-            this.state.productList.map(product => {
-              return (
-                <div className="item" key={product}>
-                <ProductNavigation image={product}/>
-              </div>
-              )
-            })
-          }
-        </Slider>
-
         <Footer bag = {this.state.bag}/>
       
       </div>

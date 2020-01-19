@@ -3,7 +3,7 @@ import Logo from '../image/logo.png'
 
 
 
-const Header = ()=>{
+const Header = ({heading})=>{
 
   
 
@@ -14,7 +14,7 @@ const Header = ()=>{
     </div>
 
     <div className="header-breadcrumb">
-      Fur Coats
+      {heading}
     </div>
   </header>
     )

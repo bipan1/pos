@@ -5,7 +5,7 @@ class ProductSelection extends React.Component {
   render () {
     const myMap = Array.apply(null, Array(this.props.quantity)).map((item,i) => {
       return (
-        <li className="nav-item">
+        <li key={i} className="nav-item">
             <button className="nav-link active" id={`pills-product${i}-tab`} data-toggle="pill" onClick={() =>{this.props.handleClick(i)}} role="tab" aria-controls="pills-product1" aria-selected="true">
               <div className="imgbox">
                 <img src={this.props.image} alt="" />
@@ -19,7 +19,7 @@ class ProductSelection extends React.Component {
     const myMapSec = Array.apply(null, Array(this.props.quantity)).map((item,i)=> {
       if(this.props.index === i)
       return (
-        <div className={`tab-pane fade show active`} id={`pills-product${i}`} role="tabpanel" aria-labelledby={`pills-product-${i}tab`}>
+        <div key={i} className={`tab-pane fade show active`} id={`pills-product${i}`} role="tabpanel" aria-labelledby={`pills-product-${i}tab`}>
           <div className="product-description">
               <span className="heading">Size & Fit</span> 
               <div className="description">
@@ -103,6 +103,7 @@ class ProductSelection extends React.Component {
             </div>
           </div>
       )
+      return null
     })
   
 
