@@ -1,8 +1,6 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-
-
-
+import {connect} from 'react-redux';
 
 class Footer extends React.Component{
   constructor(props) {
@@ -13,7 +11,6 @@ class Footer extends React.Component{
     }
   }
   
-
   handleClick = () => {
     this.setState({
       toBag : true
@@ -21,26 +18,11 @@ class Footer extends React.Component{
   }
 
   render () {
-
-    
-    let totalcost = 0
-    this.props.bag.map(item => {
-      totalcost = totalcost + item.price
-      return {}
-    })
-
     if(this.state.toBag === true){
       return (
-        <Redirect to = {{
-          pathname : '/bag',
-          state : {
-            bagList : this.props.bag,
-            totalcost : totalcost
-          }
-        }} />
+        <Redirect to = '/bag' />
       )
     }
-
 
     return (
       <footer className="footer">
@@ -55,13 +37,13 @@ class Footer extends React.Component{
           </div>
           <div className="item">
             <h6>My Bag</h6>
-            <p>{this.props.bag.length} items</p>
+            <p>{this.props.bagState.bagList.length} items</p>
           </div>
   
   
           <div className="item">
             <h6>Cost</h6>
-            <p>$ {totalcost}</p>
+            <p>$ {this.props.bagState.totalCost}</p>
           </div>
   
           <div className="ml-auto">
@@ -74,5 +56,10 @@ class Footer extends React.Component{
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    bagState : state.bag
+  }
+}
 
-export default Footer
+export default connect(mapStateToProps, null)(Footer)

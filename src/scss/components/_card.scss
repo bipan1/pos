@@ -4,12 +4,13 @@
     padding-right: 1rem;
     display: flex;
     align-items: flex-end;
+    text-align: right;
     justify-content: space-between;
     
     overflow: hidden;
     margin-bottom: 1rem;
     .imgbox{
-      width: 45%;
+      width: 60%;
       height: 7.5rem;
       position: relative;
 
@@ -29,7 +30,6 @@
     h4{
       color: $dark;
       font-weight: 300;
-      
     }
   }
 

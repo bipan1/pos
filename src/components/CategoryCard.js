@@ -7,7 +7,7 @@ const CategoryCard = ({title,image,background,click})=>{
       <div className="imgbox">
         <img onClick={() => click(title)} src={image} alt={title}/>
       </div>
-      <h4>{title}</h4>
+      <h6>{title}</h6>
     </div>
   )
 }

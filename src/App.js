@@ -1,6 +1,7 @@
 import React from 'react';
 import 'jquery';
 import 'bootstrap/js/dist/tab';
+import store from './redux/store';
 
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import Home from './templates/Home';
@@ -8,7 +9,7 @@ import Category from './templates/Category';
 import ProductDescription from './templates/ProductDescription';
 import Items from './templates/Items';
 // import Detail from './templates/Detail';
-
+import {Provider} from 'react-redux';
 import Confirmation from './templates/Confirmation';
 import Bag from './templates/Bag';
 import './App.scss';
@@ -18,6 +19,7 @@ import './App.scss';
 function App() {
   
   return (
+    <Provider store={store}>
   
     <BrowserRouter>
     <React.Fragment>
@@ -36,6 +38,7 @@ function App() {
     </React.Fragment>
     
   </BrowserRouter>
+  </Provider>
      
   );
 }

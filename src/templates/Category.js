@@ -2,6 +2,7 @@ import React from 'react';
 import CategoryCard from '../components/CategoryCard';
 import Header from '../components/Header';
 import {Redirect} from 'react-router-dom';
+import {connect} from 'react-redux';
 
 import Jacket from '../images/male/Coats&Jackets/Jacket.jpeg'
 import Hoodie from '../images/male/Hoodies/Hoodie.jpg'
@@ -100,8 +101,7 @@ class Category extends React.Component{
   render() {
     const {color} = this.state;
     let primaryList = []
-    if(this.props.location.state.gender === "Male")
-    // if(this.state.gender === "Male")
+    if(this.props.genderData === "Male")
     {
       primaryList = this.state.male
     }
@@ -159,4 +159,11 @@ class Category extends React.Component{
     )
   }
 }
-export default Category;
+
+const mapStateToProps = (state) => {
+  return {
+    genderData : state.home.gender
+  }
+}
+
+export default connect(mapStateToProps, null)(Category);

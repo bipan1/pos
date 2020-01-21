@@ -1,18 +1,21 @@
 import React, { Component } from "react";
 import Slider from "react-slick";
-import Product1 from '../image/product1.png'
+import {connect} from 'react-redux';
+import ProductHighLight from '../components/ProductHighLight';
+import ProductNavigation from "../components/ProductNavigation";
+import ProductSelection from '../components/ProductSelection';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
+import Bubble from '../image/bubble.png';
+import {addToBag, calculateCost} from '../redux';
+
+import Product1 from '../image/product1.png'   
 import Product2 from '../image/product2.png'
 import Product3 from '../image/product3.png'
 import Product4 from '../image/product4.png'
 import Product5 from '../image/product5.png'
-import Bubble from '../image/bubble.png'
-import ProductHighLight from '../components/ProductHighLight'
-import ProductNavigation from "../components/ProductNavigation";
-import ProductSelection from '../components/ProductSelection'
-import Footer from '../components/Footer'
-import Header from '../components/Header'
 
-export default class ProductDescription extends Component {
+class ProductDescription extends Component {
     state = {
       nav1: null,
       nav2: null,
@@ -112,9 +115,10 @@ export default class ProductDescription extends Component {
       array.push(obj);
       return {}
     })
-    this.setState({
-      bag : [...this.state.bag, ...array]
-    })
+
+    this.props.addToBag(array);
+    this.props.calculateCost();
+    
   }
 
   render() {
@@ -296,3 +300,18 @@ export default class ProductDescription extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addToBag : (array) => dispatch(addToBag(array)),
+    calculateCost : () => dispatch(calculateCost())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductDescription);

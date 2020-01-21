@@ -1,15 +1,19 @@
 import React from 'react';
 import Slider from "react-slick";
+import {connect} from 'react-redux';
+import {fetchApi} from '../redux';
 import { loadModels, getFullFaceDescription} from '../api/face';
-import axios from 'axios';
-import Product1 from '../image/product1.png'
-import Product2 from '../image/product2.png'
-import Product3 from '../image/product3.png'
-import Product4 from '../image/product4.png'
-import Product5 from '../image/product5.png'
 import ProductNavigation from "../components/ProductNavigation";
 import Webcam from 'react-webcam';
 import { Redirect } from 'react-router-dom';
+
+
+// import Product1 from '../image/product1.png'
+// import Product2 from '../image/product2.png'
+// import Product3 from '../image/product3.png'
+// import Product4 from '../image/product4.png'
+// import Product5 from '../image/product5.png'
+
 
 const inputSize = 160;
 
@@ -18,11 +22,8 @@ class Home extends React.Component{
     super(props)
   
     this.state = {
-      fullDescription: null,
-      flag : false,    //flag to render slider child
-      toCategory : false,
-      recommendList : [Product1, Product2, Product3, Product4, Product5],
-      gender : '' 
+      flag : false,
+      toCategory : false
     }
   }
 
@@ -53,17 +54,14 @@ class Home extends React.Component{
         this.webcam.getScreenshot(),
         inputSize
     ).then(fullDesc => {
-        console.log(fullDesc)
-        this.setState({
-            fullDescription : fullDesc
-        })
-        if(this.state.fullDescription.length === 0){
+        const fullDescription = fullDesc
+        if(fullDescription.length === 0){
             console.log("Face not detected.")
         }
         else {
           console.log("face detected")
-          this.callAiApi(); //Ai api is called once the face is detected.
           clearInterval(this.interval);
+          this.callAiApi();       //Ai api is called once the face is detected.
         }
     });
   }
@@ -75,7 +73,7 @@ class Home extends React.Component{
     list.push(this.webcam.getScreenshot())
 
     console.log(list)
-    //base64 to image file conversion.
+    
     const base64ToBlob = (image, fileName) => {
         const byteString = atob(image);
         const fileType = 'image/'+fileName.split(".")[fileName.split(".").length -1];
@@ -87,29 +85,17 @@ class Home extends React.Component{
         let img = new Blob([ia], { type: fileType });
         return img;
     }
+      
     const file = list.map((image) => base64ToBlob(image.split(',')[1], 'file.png'))
-
+    
     // from data 
     let formdata = new FormData();
 
     formdata.append('file', file[0])
     formdata.append('file', file[1])
     formdata.append('file', file[2])
-
     //AI api call
-    axios.post("http://192.168.80.20:8001/gender",formdata)
-    .then(response => {
-      console.log(response)
-      this.setState({
-        flag : true,
-        gender : response.data.gender,
-        recommendList : response.data.recommended_items
-      });
-    })
-    .catch(error => {
-      this.initFaceDetection()
-      console.log(error)
-    })
+    this.props.fetchApi(formdata, this.initFaceDetection);
   }
   
   handleClick = () => {
@@ -121,18 +107,11 @@ class Home extends React.Component{
   render () {
 
     if(this.state.toCategory === true) {
-      console.log(this.state.gender)
-      return <Redirect to={{
-        pathname : '/category',
-        state : {
-          gender : this.state.gender
-        }
-      }}/>
+      return <Redirect to='/category'/>
     }
 
-    if(this.state.flag){
+    if(this.props.apidata.flag){
       let imgbox = document.querySelector('.home .imgbox')
-      console.log(imgbox)
       imgbox.style.height='32rem';
     }
 
@@ -156,7 +135,7 @@ class Home extends React.Component{
           </Webcam>
         </div>
 
-        {this.state.flag && 
+        {this.props.apidata.flag && 
           <div className="container">
             <div className="row align-items-center">
               <div className="col-10">
@@ -168,12 +147,14 @@ class Home extends React.Component{
                   centerMode={false}
                   className="slick-thumb slick-thumb_home"
                 >
-                  {this.state.recommendList.map(item => {
+                  {this.props.apidata.recommendList.map(item => {
+                    if(item.images.length > 0)
                     return (
-                      <div className="item">
-                        <ProductNavigation onClick={this.onRecommendClick} image={item} />
+                      <div key={item.id} className="item">
+                        <ProductNavigation onClick={this.onRecommendClick} image={item.images[0].image} />
                       </div> 
                     )
+                    return null
                   })}
                 </Slider>   
               </div>
@@ -187,4 +168,17 @@ class Home extends React.Component{
     )
   }
 }
-export default Home;
+
+const mapStateToProps = state => {
+  return {
+      apidata : state.home
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+      fetchApi : (formdata, initFaceDetection) => dispatch(fetchApi(formdata, initFaceDetection))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

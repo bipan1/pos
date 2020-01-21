@@ -3,6 +3,7 @@ import Avatar from '../image/avatar.png';
 import Bubble from '../image/bubble.png';
 import Bag from '../image/bag.png';
 import { QRCode } from 'react-qr-svg';
+import {connect} from 'react-redux';
 
 import Header  from '../components/Header'
 
@@ -22,8 +23,8 @@ class  Confirmation extends React.Component{
             level="Q"
             style={{ width: 512 }}
             value={JSON.stringify({
-              products : this.props.location.state.bag,
-              total : 1000
+              products : this.props.bagState.bagList,
+              total : this.props.bagState.totalCost
             })}
           />
           <br />
@@ -40,4 +41,11 @@ class  Confirmation extends React.Component{
    )
   }
 }
-export default Confirmation;
+
+const mapStateToProps = (state) => {
+  return {
+    bagState : state.bag
+  }
+}
+
+export default connect(mapStateToProps, null)(Confirmation);

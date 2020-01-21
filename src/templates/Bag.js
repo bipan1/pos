@@ -1,7 +1,8 @@
 import React from 'react'
 import Avatar from '../image/avatar.png'
 import Bubble from '../image/bubble.png'
-
+import {connect} from 'react-redux';
+import {deleteFromBag, calculateCost} from '../redux'
 import Header from '../components/Header'
 import { Redirect } from 'react-router-dom'
 
@@ -10,7 +11,6 @@ class Bag extends React.Component{
     super(props)
   
     this.state = {
-      flag : false,
       toHome : false,
       toCheckout : false
     }
@@ -28,18 +28,11 @@ class Bag extends React.Component{
     })
   }
 
-  handleClick = (i) => {
-    this.props.location.state.bagList.splice(i,1)
-    this.setState({
-      flag : true
-    })
+  deleteClickHandaler = (i) => {
+    this.props.deleteFromBag(i)
+    this.props.calculateCost()
   }
 
-  componentDidMount = () => {
-    this.setState({
-      bag : this.props.location.state.bagList
-    })
-  }
 
   render () {
     if(this.state.toHome === true) {
@@ -50,12 +43,7 @@ class Bag extends React.Component{
 
     if(this.state.toCheckout === true) {
       return (
-        <Redirect to = {{
-          pathname : '/confirmation',
-          state : {
-            bag : this.state.bag
-          }
-        }} />
+        <Redirect to = '/confirmation'/>
       )
     }
 
@@ -72,7 +60,7 @@ class Bag extends React.Component{
           </div>
           <div className="product-total">
             <h6>TOTAL</h6>
-            <h4>${this.props.location.state.totalcost}</h4>
+            <h4>${this.props.bagState.totalCost}</h4>
           </div>
         </div>
   
@@ -83,7 +71,7 @@ class Bag extends React.Component{
           <div className="container">
             <ul className="cartlist">
               {
-                this.props.location.state.bagList.map((item, i)=> {
+                  this.props.bagState.bagList.map((item, i) => {
                   return (
                     <li key={i} className="card-cart mt-3">
                 <div className="imgbox">
@@ -106,7 +94,7 @@ class Bag extends React.Component{
                 </div>
   
                 <div className="close">
-                  <i onClick={() => this.handleClick(i)} className="ic-close"></i>
+                  <i onClick={() => this.deleteClickHandaler(i)} className="ic-close"></i>
                 </div>
               </li>
                   )
@@ -122,8 +110,6 @@ class Bag extends React.Component{
         </footer>
   
       </div>
-    
-    
       </>
     
     )
@@ -131,5 +117,17 @@ class Bag extends React.Component{
   
 }
 
+const mapStateToProps = (state) => {
+  return {
+    bagState :  state.bag
+  }
+}
 
-export default Bag
+const mapDispatchToProps = (dispatch) => {
+  return {
+    deleteFromBag : (i) => dispatch(deleteFromBag(i)),
+    calculateCost : () => dispatch(calculateCost())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Bag)
