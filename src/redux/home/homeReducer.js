@@ -5,7 +5,7 @@ const initialState = {
     error : '',
     recommendList : [],
     flag : false,
-    gender : ''
+    gender : 'Female'
 }
 
 const homeReducer = (state= initialState, action) => {

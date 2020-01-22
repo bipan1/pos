@@ -2,6 +2,7 @@ import React from 'react';
 import CategoryCard from '../components/CategoryCard';
 import Header from '../components/Header';
 import {Redirect} from 'react-router-dom';
+import {setCategory} from '../redux'
 import {connect} from 'react-redux';
 
 import Jacket from '../images/male/Coats&Jackets/Jacket.jpeg'
@@ -25,7 +26,6 @@ class Category extends React.Component{
   constructor(props) {
     super(props)
     this.state = {
-      category : '',
       color : ["bg-brown", "bg-info", "bg-pitch", "bg-orange", "bg-pink", "bg-light"],
       male : [
         {
@@ -92,9 +92,9 @@ class Category extends React.Component{
   }
 
   handleCardClick = (title) => {
+    this.props.setCategory(title)
     this.setState({
       toItems : true,
-      category : title
     })
   }
   
@@ -108,18 +108,13 @@ class Category extends React.Component{
     else{
       primaryList = this.state.female
     }
-
+    
     let newList = []
     newList = [...primaryList]
     newList.shift();
 
     if(this.state.toItems === true) {
-      return <Redirect to = {{
-        pathname : '/items',
-        state : {
-          category : this.state.category
-        }
-      }} />
+      return <Redirect to = '/items'/>
     }
 
     return (
@@ -166,4 +161,10 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps, null)(Category);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setCategory : (title) => dispatch(setCategory(title))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Category);

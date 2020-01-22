@@ -1,9 +1,10 @@
 import React from 'react';
 import axios from 'axios';
-import CategoryCard from '../components/CategoryCard';
+import ItemsCard from '../components/ItemsCard';
 import Header from '../components/Header';
 import { Redirect } from 'react-router-dom';
 import {connect} from 'react-redux';
+import {setItemId} from '../redux';
 
 class Items extends React.Component {
     constructor(props) {
@@ -20,15 +21,15 @@ class Items extends React.Component {
         }
     }
 
-    handleCardClick = (title) => {
+    handleCardClick = (id) => {
+        this.props.setItemId(id);
         this.setState({
-            toProduct : true,
-            product : title
+            toProduct : true
         })
     }
     
     componentDidMount= () => {
-        axios.get(`http://192.168.40.170:8000/products/?category__name=${this.props.location.state.category}&gender=${this.props.genderData}`)
+        axios.get(`http://192.168.40.170:8000/products/?category__name=${this.props.categoryData}&gender=${this.props.genderData}`)
         .then(res => {
             this.setState({
                 itemsList : res.data.results,
@@ -53,9 +54,10 @@ class Items extends React.Component {
                 buttonFlag : false     //If there is no next url then we remove load more button.
             })
         } else {
-            let position = url.indexOf('gender=') + 7; //getting index to append gender on the url.
-            let realUrl = [url.slice(0, position), this.props.genderData, url.slice(position)].join('');
-            axios.get(realUrl) 
+            // let position = url.indexOf('gender=') + 7; //getting index to append gender on the url.
+            // let realUrl = [url.slice(0, position), this.props.genderData, url.slice(position)].join('');
+            // console.log(realUrl)
+            axios.get(url) 
             .then(res => {
                 const newList = res.data.results;
                 this.setState({
@@ -71,12 +73,7 @@ class Items extends React.Component {
 
     render () {
         if(this.state.toProduct === true){
-            return <Redirect to={{
-                pathname : './detail',
-                state : {
-                    product : this.state.product
-                }
-            }}/>
+            return <Redirect to= '/product'/>
         }
 
         const {color} = this.state;
@@ -88,14 +85,15 @@ class Items extends React.Component {
 
         return (
             <>
-            <Header heading={this.props.location.state.category}/>
+            <Header heading={this.props.categoryData}/>
             {this.state.flag && 
             <div className="container mt-4">
                 <div className="row">
                     <div className="col">
-                        <CategoryCard 
+                        <ItemsCard
+                            id={this.state.itemsList[0].id}
                             click={this.handleCardClick} 
-                            title={this.state.itemsList[0].name} 
+                            title={this.state.itemsList[0].name}
                             image={this.state.itemsList[0].images[0].image} 
                             background={color[Math.floor(Math.random()*color.length)]}
                         />
@@ -108,9 +106,10 @@ class Items extends React.Component {
                         if(item.images.length > 0)
                         return(
                         <div key={item.id} className="col-6">
-                            <CategoryCard
+                            <ItemsCard
+                                id={item.id}
                                 click={this.handleCardClick}
-                                title={item.name} 
+                                title={item.name}
                                 image={item.images[0].image} 
                                 background={color[Math.floor(Math.random()*color.length)]}
                             />
@@ -135,8 +134,15 @@ class Items extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        genderData : state.home.gender
+        genderData : state.home.gender,
+        categoryData : state.var.category
     }
 }
 
-export default connect(mapStateToProps, null)(Items);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setItemId : (id) => dispatch(setItemId(id))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Items);

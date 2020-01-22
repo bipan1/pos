@@ -8,6 +8,7 @@ import Footer from '../components/Footer';
 import Header from '../components/Header';
 import Bubble from '../image/bubble.png';
 import {addToBag, calculateCost} from '../redux';
+import axios from 'axios';
 
 import Product1 from '../image/product1.png'   
 import Product2 from '../image/product2.png'
@@ -48,6 +49,7 @@ class ProductDescription extends Component {
         nav1: this.slider1,
         nav2: this.slider2
       });
+      // axios.get(`http://192.168.40.170:8000/products/?id=${this.props.itemId}`)
     }
 
   increaseQuantity= ()=>{             //increase the quantity of selected product
@@ -303,7 +305,7 @@ class ProductDescription extends Component {
 
 const mapStateToProps = (state) => {
   return {
-
+    itemId : state.var.itemId
   }
 }
 
