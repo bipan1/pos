@@ -10,47 +10,88 @@ import Bubble from '../image/bubble.png';
 import {addToBag, calculateCost} from '../redux';
 import axios from 'axios';
 
-import Product1 from '../image/product1.png'   
-import Product2 from '../image/product2.png'
-import Product3 from '../image/product3.png'
-import Product4 from '../image/product4.png'
-import Product5 from '../image/product5.png'
-
 class ProductDescription extends Component {
-    state = {
-      nav1: null,
-      nav2: null,
-      quantity:1,
-      selctedAttributes : [{
-        size:"",
-        color:""
-      }],
-      openProductSelection : false,
-      productList : [Product2, Product3, Product4, Product5],
-      idNo : 0,
-      bag : [],
-      index : 0
-    };
+  state = {
+    id : 0,
+    sliderResponse : null,
+    flag : false,
+    itemRes : null,
+    nav1: null,
+    nav2: null,
+    quantity:1,
+    selctedAttributes : [{
+      size:"",
+      color:""
+    }],
+    openProductSelection : false,
+    idNo : 0,
+    index : 0
+  };
 
-    changeFlag = () => {  //function to be passed as prob to toggle producctSelection page
+  changeFlag = () => {  //function to be passed as prob to toggle producctSelection page
+    this.setState({
+      openProductSelection : false
+    })
+  }
+
+  handleClick =(i) => {        //set the index of product in index state
+    this.setState({
+      index : i
+    })
+  }
+
+  componentDidMount() {
+    this.setState({
+      nav2: this.slider2,
+      id : this.props.itemId
+    });
+    axios.get(`http://192.168.40.170:8000/products/?id=${this.props.itemId}`)
+    .then(res => {
       this.setState({
-        openProductSelection : false
+        itemRes : res.data
       })
-    }
-
-    handleClick =(i) => {        //set the index of product in index state
-      this.setState({
-        index : i
+    })
+    axios.get(`api_root_address_id=${this.props.itemId}`)
+    .then(resOne => {
+      const recommendList = resOne.data
+      axios.get(`http://192.168.40.170:8000/products/?id=${recommendList}`)
+      .then(resTwo => {
+        this.setState({
+          sliderResponse : resTwo.data,
+          flag : true
+        })
       })
-    }
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
 
-    componentDidMount() {
+  handleRecommendClick = (id) => {
+    axios.get(`http://192.168.40.170:8000/products/?id=${id}`)
+    .then(res => {
       this.setState({
-        nav1: this.slider1,
-        nav2: this.slider2
-      });
-      // axios.get(`http://192.168.40.170:8000/products/?id=${this.props.itemId}`)
-    }
+        id :id,
+        itemRes : res.data,
+        flag : false
+      })
+    })
+    axios.get(`api_root_address_id=${id}`)
+    .then(resOne => {
+      const recommendList = resOne.data
+      axios.get(`http://192.168.40.170:8000/products/?id=${recommendList}`)
+      .then(resTwo => {
+        this.setState({
+          sliderResponse : resTwo.data,
+          flag : true
+        })
+      })
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+  
 
   increaseQuantity= ()=>{             //increase the quantity of selected product
     let arr = this.state.selctedAttributes
@@ -64,7 +105,6 @@ class ProductDescription extends Component {
           openProductSelection:true, 
           selctedAttributes : arr        //when quantity is greather than one then navigate to anoter page flag.
         }
-      
     })
   }
   
@@ -103,24 +143,21 @@ class ProductDescription extends Component {
     })
   }
 
-  addToBag = (price, id) => {     // Add the contents to bag. (click handler)
+  addToBag = (image, price) => {     // Add the contents to bag. (click handler)
     let array = [];
     this.state.selctedAttributes.map(item => {
-      let image  = this.state.productList[this.state.idNo - 1]
       let obj = {
         "image" : image,
         "price" : price,
-        "id" : id,
+        "id" : this.state.id,
         "size" : item.size,
         "color" : item.color
       }
       array.push(obj);
       return {}
     })
-
     this.props.addToBag(array);
     this.props.calculateCost();
-    
   }
 
   render() {
@@ -143,28 +180,12 @@ class ProductDescription extends Component {
         />
       :null}
 
-        <Slider
-          asNavFor={this.state.nav2}
-          ref={slider => (this.slider1 = slider)}
-          arrows={false}
-          afterChange = {this.nextClick}
-        >
-          <div className="item">
-            <ProductHighLight image={Product1} addToBag={this.addToBag} price = {200} url="/home" />
+          {this.state.flag && 
+          <div>
+            <div className="item">
+            <ProductHighLight image={this.state.itemRes.results[0].images[0].image} addToBag={this.addToBag} price = {200} url="/home" />
           </div>
-          
-          {
-            this.state.productList.map(product => {
-              return (
-                <div className="item" key={product}>
-                  <ProductHighLight image={product} addToBag={this.addToBag} price = {200} url="/home" />
-                </div>
-              )
-            })
-          }
-        </Slider>
-        
-        
+
       <div className="container">
         <div className="product">
           <h6 className="product-name">
@@ -274,7 +295,6 @@ class ProductDescription extends Component {
       </div>
 
         <Slider
-          asNavFor={this.state.nav1}
           ref={slider => (this.slider2 = slider)}
           slidesToShow={4}
           swipeToSlide={true}
@@ -283,19 +303,19 @@ class ProductDescription extends Component {
           centerMode={true}
           className="slick-thumb"
         >
-          <ProductNavigation image={Product1}/>
           {
-            this.state.productList.map(product => {
+            this.state.sliderResponse.map(product => {
               return (
-                <div className="item" key={product}>
-                <ProductNavigation image={product}/>
-              </div>
+                <div className="item" key={product.id}>
+                  <ProductNavigation id={product.id} click={this.handleRecommendClick} image={product.images[0].image}/>
+                </div>
               )
             })
           }
         </Slider>
+        </div>}
 
-        <Footer bag = {this.state.bag}/>
+        <Footer/>
       
       </div>
       </>

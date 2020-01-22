@@ -108,7 +108,8 @@
       content:'';
       display: block;
       width: 85%;
-      height: calc(100% - 3rem);
+      // height: calc(100% - 3rem);
+      height: calc(100%);
       background-color: white;
       position: absolute;
       top: 0;

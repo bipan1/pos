@@ -1,10 +1,10 @@
 import React from 'react'
 
 
-const ProductNavigation = ({image, onClick})=>{
+const ProductNavigation = ({id, image, click})=>{
   return(
     <div className="product-navigation">
-      <img onClick={onClick} src={image} alt="Fur Coats Navigation"/>
+      <img onClick={() => click(id)} src={image} alt="Fur Coats Navigation"/>
     </div>
   )
 }
